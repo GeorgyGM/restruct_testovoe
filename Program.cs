@@ -1,4 +1,4 @@
-﻿List<Room> rooms = [
+List<Room> rooms = [
     new(1,10),
     new(2,20),
     new(3,30)
@@ -20,8 +20,9 @@ foreach (var r in rooms)
 static void PrintReport(Room r, List<Tariff> tariffs, DateTime periodFrom, DateTime periodTo)
 {
     Console.WriteLine($"Комната №{r.Number}");
+    const int sh = 15;
     Console.WriteLine("----------------------------------------------------------------------------------------------------------------------------------------------------");
-    Console.WriteLine($"|{" Период ",-20}|{" Сальдо входящее ",-20}|{" Начислено ",-20}|{" Перерасчет ",-20}|{" Итого начислено ",-20}|{" Оплачено ",-20}|{" Сальдо исходящее ",-20}|");
+    Console.WriteLine($"|{" Период ",-sh}|{" Сальдо входящее ",-sh}|{" Начислено ",-sh}|{" Перерасчет ",-sh}|{" Итого начислено ",-sh}|{" Оплачено ",-sh}|{" Сальдо исходящее ",-sh}|");
     Console.WriteLine("----------------------------------------------------------------------------------------------------------------------------------------------------");
     
     decimal saldo_init = 0, itogo_nachisl = 0, saldo_out = 0;
@@ -31,16 +32,16 @@ static void PrintReport(Room r, List<Tariff> tariffs, DateTime periodFrom, DateT
         
         if (actualTariff == null)
         {
-            Console.WriteLine($"|{periodFrom,-20:MMMMyyyy}|{"-",20}|{"-",20}|{"-",20}|{"-",20}|{"-",20}|{"-",20}|");
+            Console.WriteLine($"|{periodFrom,-sh:MMMMyyyy}|{"-",sh}|{"-",sh}|{"-",sh}|{"-",sh}|{"-",sh}|{"-",sh}|");
         }
         else
         {
             
-            Pereraschet_room recount = new(actualTariff.StartDt, -1);
-            Oplata_room payment= new(actualTariff.StartDt,  5);//payment.opl_am //r.Number
+            Pereraschet_room recount = new(-1);
+            Oplata_room payment= new(5);//payment.opl_am //r.Number
             itogo_nachisl = actualTariff.Amount * r.Square + recount.perer_am;
             saldo_out = saldo_init + itogo_nachisl - payment.opl_am;
-            Console.WriteLine($"|{periodFrom,-20:MMMMyyyy}|{saldo_init,20}|{(actualTariff.Amount * r.Square),20}|{recount.perer_am,20}|{itogo_nachisl,20}|{payment.opl_am,20}|{saldo_out,20}|");
+            Console.WriteLine($"|{periodFrom,-sh:MMMMyyyy}|{saldo_init,sh}|{(actualTariff.Amount * r.Square),sh}|{recount.perer_am,sh}|{itogo_nachisl,sh}|{payment.opl_am,sh}|{saldo_out,sh}|");
             saldo_init = saldo_out;
         
         }
@@ -71,12 +72,12 @@ public class Tariff(int year, int month, decimal amount)
     }
 }
 
-public class Oplata_room(DateTime oplata_month, decimal oplata_amount) //uint room_number, 
+public class Oplata_room(decimal oplata_amount) //uint room_number, 
 {
     public decimal opl_am { get; private set; } = oplata_amount;
 }
 
-public class Pereraschet_room(DateTime oplata_month, decimal perer_amount)
+public class Pereraschet_room(decimal perer_amount)
 {
     public decimal perer_am { get; private set; } = perer_amount;
 }
